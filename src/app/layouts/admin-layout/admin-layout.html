@@ -1,0 +1,108 @@
+<nz-layout class="admin-layout">
+  <!-- Sidebar -->
+  <nz-sider
+    class="sidebar"
+    [nzWidth]="240"
+    [nzCollapsedWidth]="72"
+    nzCollapsible
+    nzBreakpoint="lg"
+    [nzCollapsed]="isCollapsed()"
+    (nzCollapsedChange)="isCollapsed.set($event)"
+    [nzTrigger]="null"
+  >
+    <div class="sidebar-inner">
+      <!-- Logo -->
+      <div class="flex items-center justify-center py-4">
+        <nz-avatar
+          [nzSize]="40"
+          nzIcon="global"
+          class="logo-avatar"
+        />
+      </div>
+
+      <!-- Main menu -->
+      <ul nz-menu nzMode="inline" class="sidebar-menu">
+        @for (item of mainMenuItems(); track item.label) {
+          @if (item.children) {
+            <li nz-submenu [nzTitle]="item.label" [nzIcon]="item.icon">
+              <ul>
+                @for (child of item.children; track child.route) {
+                  <li
+                    nz-menu-item
+                    nzMatchRouter
+                    [routerLink]="child.route"
+                  >
+                    <span>{{ child.label }}</span>
+                  </li>
+                }
+              </ul>
+            </li>
+          } @else {
+            <li
+              nz-menu-item
+              nzMatchRouter
+              [routerLink]="item.route"
+              [title]="isCollapsed() ? item.label : ''"
+            >
+              <nz-icon [nzType]="item.icon" />
+              @if (!isCollapsed()) {
+                <span>{{ item.label }}</span>
+              }
+            </li>
+          }
+        }
+      </ul>
+
+      <!-- Spacer -->
+      <div class="sidebar-spacer"></div>
+
+      <!-- Bottom section -->
+      <ul nz-menu nzMode="inline" class="sidebar-menu sidebar-menu-bottom">
+        @for (item of bottomMenuItems(); track item.route) {
+          <li
+            nz-menu-item
+            nzMatchRouter
+            [routerLink]="item.route"
+            [title]="isCollapsed() ? item.label : ''"
+          >
+            <nz-icon [nzType]="item.icon" />
+            @if (!isCollapsed()) {
+              <span>{{ item.label }}</span>
+            }
+          </li>
+        }
+      </ul>
+
+      <!-- User profile -->
+      <div class="sidebar-user">
+        <nz-avatar [nzText]="userName().charAt(0)" [nzSize]="36" class="user-avatar" />
+        @if (!isCollapsed()) {
+          <div class="user-info">
+            <div class="user-name">{{ userName() }}</div>
+            <div class="user-role">Admin</div>
+          </div>
+        }
+      </div>
+
+      <!-- Logout -->
+      <button
+        class="sidebar-logout"
+        (click)="logout()"
+        [title]="isCollapsed() ? 'Logout' : ''"
+        type="button"
+      >
+        <nz-icon nzType="logout" />
+        @if (!isCollapsed()) {
+          <span>Log out</span>
+        }
+      </button>
+    </div>
+  </nz-sider>
+
+  <!-- Main content -->
+  <nz-layout class="main-layout">
+    <nz-content class="main-content">
+      <router-outlet />
+    </nz-content>
+  </nz-layout>
+</nz-layout>

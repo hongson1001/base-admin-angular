@@ -1,0 +1,51 @@
+<div class="dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1 class="page-title">Dashboard</h1>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stat-cards">
+    @for (stat of stats; track stat.title) {
+      <nz-card class="stat-card">
+        <div class="stat-value">{{ stat.value }}</div>
+        <div class="stat-footer">
+          <span class="stat-change" [class.positive]="stat.isPositive" [class.negative]="!stat.isPositive">
+            <nz-icon [nzType]="stat.isPositive ? 'arrow-up' : 'arrow-down'" />
+            {{ stat.change > 0 ? '+' : '' }}{{ stat.change }}%
+          </span>
+          <span class="stat-title">{{ stat.title }}</span>
+        </div>
+      </nz-card>
+    }
+  </div>
+
+  <!-- Product Sales Chart -->
+  <nz-card class="chart-card product-sales-card">
+    <div class="chart-header">
+      <h3 class="chart-title">Product sales</h3>
+    </div>
+    <div class="chart-highlight">
+      <span class="highlight-value">${{ '52,187' }}</span>
+      <span class="highlight-change positive">
+        <nz-icon nzType="arrow-up" /> +2.4%
+      </span>
+    </div>
+    <div echarts [options]="productSalesOptions" class="chart-container"></div>
+  </nz-card>
+
+  <!-- Bottom charts row -->
+  <div class="charts-row">
+    <!-- Sales by Category -->
+    <nz-card class="chart-card">
+      <h3 class="chart-title">Sales by product category</h3>
+      <div echarts [options]="categoryOptions" class="chart-container chart-donut"></div>
+    </nz-card>
+
+    <!-- Sales by Countries -->
+    <nz-card class="chart-card">
+      <h3 class="chart-title">Sales by countries</h3>
+      <div echarts [options]="countriesOptions" class="chart-container chart-donut"></div>
+    </nz-card>
+  </div>
+</div>

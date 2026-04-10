@@ -1,0 +1,82 @@
+<div class="signin-page">
+  <!-- Left: Form -->
+  <div class="signin-form-section">
+    <div class="signin-form-wrapper">
+      <h1 class="signin-title">Welcome Back</h1>
+      <p class="signin-subtitle">Enter your email and password to sign in</p>
+
+      @if (errorMessage(); as error) {
+        <nz-alert
+          nzType="error"
+          [nzMessage]="error"
+          nzShowIcon
+          nzCloseable
+          (nzOnClose)="errorMessage.set('')"
+        />
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input
+            class="form-input"
+            formControlName="email"
+            type="email"
+            id="email"
+            placeholder="Your email address"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            class="form-input"
+            formControlName="password"
+            type="password"
+            id="password"
+            placeholder="Your password"
+          />
+        </div>
+
+        <div class="form-group remember-group">
+          <label class="switch-label">
+            <input type="checkbox" formControlName="remember" class="switch-input" />
+            <span class="switch-slider"></span>
+            <span class="switch-text">Remember me</span>
+          </label>
+        </div>
+
+        <button
+          class="signin-btn"
+          [class.loading]="loading()"
+          [disabled]="loading()"
+          type="submit"
+        >
+          @if (loading()) {
+            SIGNING IN...
+          } @else {
+            SIGN IN
+          }
+        </button>
+
+        <p class="signin-footer">
+          Don't have an account?
+          <a class="signup-link">Sign Up</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Right: Illustration -->
+  <div class="signin-illustration">
+    <div class="illustration-content">
+      <div class="illustration-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+        <div class="shape shape-5"></div>
+      </div>
+    </div>
+  </div>
+</div>
