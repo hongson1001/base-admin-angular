@@ -36,6 +36,7 @@ import {
 } from '@ant-design/icons-angular/icons';
 
 import { routes } from './app.routes';
+import { apiInterceptor } from '@core/interceptors/api.interceptor';
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
 
 registerLocaleData(vi);
@@ -67,7 +68,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([apiInterceptor, authInterceptor])),
     provideNzI18n(vi_VN),
     provideNzIcons(icons),
     provideEchartsCore({ echarts }),
