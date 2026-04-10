@@ -52,3 +52,6 @@ export { Tooltip } from './components/tooltip/tooltip';
 // ===== Pipes =====
 export { TruncatePipe } from './pipes/truncate.pipe';
 export { SafeHtmlPipe } from './pipes/safe-html.pipe';
+
+// ===== Services =====
+export { ApiService } from './services/api.service';
