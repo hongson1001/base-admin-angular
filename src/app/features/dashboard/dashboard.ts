@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NgxEchartsDirective } from 'ngx-echarts';
+import { PageHeader } from '@shared/components/page-header/page-header';
 import type { EChartsOption } from 'echarts';
 
 interface StatCard {
@@ -14,7 +15,7 @@ interface StatCard {
 @Component({
   selector: 'app-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NzCardModule, NzIconModule, NgxEchartsDirective],
+  imports: [NzCardModule, NzIconModule, NgxEchartsDirective, PageHeader],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })

@@ -1,17 +1,12 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideEchartsCore } from 'ngx-echarts';
-import * as echarts from 'echarts/core';
-import { BarChart, PieChart } from 'echarts/charts';
-import { GridComponent, TooltipComponent, LegendComponent } from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
-
-echarts.use([BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
+import { provideHttpClient, withInterceptors, withXsrfConfiguration } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { registerLocaleData } from '@angular/common';
 import vi from '@angular/common/locales/vi';
 import { vi_VN, provideNzI18n } from 'ng-zorro-antd/i18n';
 import { provideNzIcons } from 'ng-zorro-antd/icon';
+import { AuthService } from '@core/services/auth.service';
 import {
   DashboardOutline,
   UserOutline,
@@ -33,11 +28,14 @@ import {
   ArrowDownOutline,
   GlobalOutline,
   AppstoreOutline,
+  DoubleLeftOutline,
+  DoubleRightOutline,
 } from '@ant-design/icons-angular/icons';
 
 import { routes } from './app.routes';
 import { apiInterceptor } from '@core/interceptors/api.interceptor';
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
+import { errorInterceptor } from '@core/interceptors/error.interceptor';
 
 registerLocaleData(vi);
 
@@ -62,15 +60,21 @@ const icons = [
   ArrowDownOutline,
   GlobalOutline,
   AppstoreOutline,
+  DoubleLeftOutline,
+  DoubleRightOutline,
 ];
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    provideAnimationsAsync(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([apiInterceptor, authInterceptor])),
+    provideHttpClient(
+      withInterceptors([apiInterceptor, authInterceptor, errorInterceptor]),
+      withXsrfConfiguration({ cookieName: 'XSRF-TOKEN', headerName: 'X-XSRF-TOKEN' }),
+    ),
     provideNzI18n(vi_VN),
     provideNzIcons(icons),
-    provideEchartsCore({ echarts }),
+    provideAppInitializer(() => inject(AuthService).initialize()),
   ],
 };

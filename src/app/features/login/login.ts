@@ -1,23 +1,20 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { AuthService } from '@core/services/auth.service';
+import { passwordValidators } from '@core/constants/validators';
+import { AppInput } from '@shared/components/input/input';
+import { Switch } from '@shared/components/switch/switch';
 
 @Component({
   selector: 'app-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ReactiveFormsModule,
-    NzFormModule,
-    NzInputModule,
-    NzButtonModule,
-    NzIconModule,
     NzAlertModule,
+    AppInput,
+    Switch,
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -31,8 +28,8 @@ export class Login {
   readonly errorMessage = signal('');
 
   readonly loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    account: ['', [Validators.required]],
+    password: ['', passwordValidators],
     remember: [true],
   });
 
@@ -48,13 +45,13 @@ export class Login {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    const { email } = this.loginForm.getRawValue();
+    const { account } = this.loginForm.getRawValue();
 
     // TODO: Replace with actual API call
     setTimeout(() => {
       const payload = btoa(JSON.stringify({
         sub: '1',
-        email,
+        email: account,
         name: 'Admin',
         roles: ['admin'],
         exp: Math.floor(Date.now() / 1000) + 86400,

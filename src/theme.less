@@ -1,7 +1,61 @@
 // Custom Theming for NG-ZORRO
 // For more information: https://ng.ant.design/docs/customize-theme/en
 
-// Override less variables to here
-// View all variables: https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/style/themes/default.less
+// ===== Global ng-zorro overrides =====
 
-// @primary-color: #1890ff;
+// --- Button ---
+button.ant-btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+button.ant-btn-primary:not(.ant-btn-dangerous) {
+  background: #52c41a;
+  border-color: #52c41a;
+
+  &:hover {
+    background: #73d13d;
+    border-color: #73d13d;
+  }
+
+  &:active {
+    background: #389e0d;
+    border-color: #389e0d;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+  }
+}
+
+button.ant-btn-default:not(.ant-btn-dangerous) {
+  border-color: #e2e8f0;
+  color: #4a5568;
+
+  &:hover {
+    border-color: #52c41a;
+    color: #52c41a;
+  }
+}
+
+button.ant-btn:active {
+  transform: scale(0.98);
+}
+
+button.ant-btn[disabled] {
+  opacity: 0.6;
+}
+
+// --- Switch ---
+.ant-switch-checked {
+  background: #4fd1c5;
+
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(79, 209, 197, 0.2);
+  }
+}
+
+.ant-switch:not(.ant-switch-checked) {
+  background: #e2e8f0;
+}

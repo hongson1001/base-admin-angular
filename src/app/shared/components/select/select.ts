@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, forwardRef, input, output, signal } from '@angular/core';
+import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 
 export interface SelectOption {
@@ -13,14 +13,22 @@ export interface SelectOption {
   selector: 'app-select',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FormsModule, NzSelectModule],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => Select),
+      multi: true,
+    },
+  ],
   template: `
     <nz-select
       [ngModel]="value()"
-      (ngModelChange)="value.set($event)"
+      (ngModelChange)="onValueChange($event)"
+      (nzBlur)="onTouched()"
       [nzPlaceHolder]="placeholder()"
       [nzMode]="mode()"
       [nzSize]="size()"
-      [nzDisabled]="disabled()"
+      [nzDisabled]="isDisabled()"
       [nzShowSearch]="showSearch()"
       [nzAllowClear]="allowClear()"
       [nzLoading]="loading()"
@@ -39,17 +47,42 @@ export interface SelectOption {
     </nz-select>
   `,
 })
-export class Select {
-  readonly value = model<unknown>(null);
+export class Select implements ControlValueAccessor {
   readonly options = input<SelectOption[]>([]);
   readonly placeholder = input('Please select');
   readonly mode = input<'default' | 'multiple' | 'tags'>('default');
   readonly size = input<'large' | 'default' | 'small'>('default');
-  readonly disabled = input(false);
   readonly showSearch = input(false);
   readonly allowClear = input(false);
   readonly loading = input(false);
   readonly serverSearch = input(false);
   readonly maxTagCount = input(0);
   readonly searched = output<string>();
+
+  readonly value = signal<unknown>(null);
+  readonly isDisabled = signal(false);
+
+  private onChange: (value: unknown) => void = () => {};
+  onTouched: () => void = () => {};
+
+  onValueChange(val: unknown): void {
+    this.value.set(val);
+    this.onChange(val);
+  }
+
+  writeValue(val: unknown): void {
+    this.value.set(val ?? null);
+  }
+
+  registerOnChange(fn: (value: unknown) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(disabled: boolean): void {
+    this.isDisabled.set(disabled);
+  }
 }

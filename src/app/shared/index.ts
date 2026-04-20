@@ -12,7 +12,7 @@ export { StatusTag } from './components/status-tag/status-tag';
 // General
 export { Button } from './components/button/button';
 export type { ButtonType, ButtonSize } from './components/button/button';
-export { Input } from './components/input/input';
+export { AppInput } from './components/input/input';
 export type { InputSize } from './components/input/input';
 export { Divider } from './components/divider/divider';
 
@@ -37,7 +37,10 @@ export type { SelectOption } from './components/select/select';
 export { Switch } from './components/switch/switch';
 export { TimePicker } from './components/time-picker/time-picker';
 export { TreeSelect } from './components/tree-select/tree-select';
-export { Upload } from './components/upload/upload';
+export { UploadImage } from './components/upload-image/upload-image';
+export { UploadFile } from './components/upload-file/upload-file';
+export type { FileAcceptPreset } from './components/upload/upload-utils';
+export { FILE_ACCEPT_PRESETS, IMAGE_ACCEPT } from './components/upload/upload-utils';
 
 // Data Display
 export { Avatar } from './components/avatar/avatar';

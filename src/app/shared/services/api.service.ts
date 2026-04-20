@@ -7,9 +7,13 @@ export class ApiService {
   private readonly http = inject(HttpClient);
 
   get<T>(path: string, params?: Record<string, string | number | boolean>): Observable<T> {
-    const httpParams = params
-      ? new HttpParams({ fromObject: params as Record<string, string> })
-      : undefined;
+    let httpParams: HttpParams | undefined;
+    if (params) {
+      httpParams = new HttpParams();
+      for (const [key, value] of Object.entries(params)) {
+        httpParams = httpParams.set(key, String(value));
+      }
+    }
     return this.http.get<T>(`/api${path}`, { params: httpParams });
   }
 

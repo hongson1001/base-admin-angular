@@ -11,97 +11,173 @@
     [nzTrigger]="null"
   >
     <div class="sidebar-inner">
-      <!-- Logo -->
-      <div class="flex items-center justify-center py-4">
-        <nz-avatar
-          [nzSize]="40"
-          nzIcon="global"
-          class="logo-avatar"
-        />
+      <!-- Logo + Toggle -->
+      <div class="flex items-center justify-between px-2.5 pt-4 pb-3">
+        <app-avatar [size]="32" icon="global" class="logo-avatar" />
+        @if (!isCollapsed()) {
+          <span class="text-lg font-bold text-gray-900 flex-1 whitespace-nowrap">Admin</span>
+          <button
+            class="collapse-btn"
+            (click)="toggleCollapsed()"
+            type="button"
+            aria-label="Collapse sidebar"
+          >
+            <nz-icon nzType="double-left" />
+          </button>
+        } @else {
+          <button
+            class="collapse-btn"
+            (click)="toggleCollapsed()"
+            type="button"
+            aria-label="Expand sidebar"
+          >
+            <nz-icon nzType="double-right" />
+          </button>
+        }
       </div>
 
-      <!-- Main menu -->
-      <ul nz-menu nzMode="inline" class="sidebar-menu">
-        @for (item of mainMenuItems(); track item.label) {
-          @if (item.children) {
-            <li nz-submenu [nzTitle]="item.label" [nzIcon]="item.icon">
-              <ul>
-                @for (child of item.children; track child.route) {
-                  <li
-                    nz-menu-item
-                    nzMatchRouter
-                    [routerLink]="child.route"
-                  >
-                    <span>{{ child.label }}</span>
-                  </li>
-                }
-              </ul>
-            </li>
-          } @else {
-            <li
-              nz-menu-item
-              nzMatchRouter
-              [routerLink]="item.route"
-              [title]="isCollapsed() ? item.label : ''"
-            >
-              <nz-icon [nzType]="item.icon" />
-              @if (!isCollapsed()) {
-                <span>{{ item.label }}</span>
+      <!-- Menu groups -->
+      <div class="sidebar-menu-area">
+        <ul nz-menu nzMode="inline" class="sidebar-menu">
+          @for (group of menuGroups(); track group.label) {
+            <li class="menu-group-label">
+              @if (isCollapsed()) {
+                <span>{{ group.label.charAt(0) }}</span>
+              } @else {
+                <span>{{ group.label }}</span>
               }
             </li>
-          }
-        }
-      </ul>
 
-      <!-- Spacer -->
-      <div class="sidebar-spacer"></div>
-
-      <!-- Bottom section -->
-      <ul nz-menu nzMode="inline" class="sidebar-menu sidebar-menu-bottom">
-        @for (item of bottomMenuItems(); track item.route) {
-          <li
-            nz-menu-item
-            nzMatchRouter
-            [routerLink]="item.route"
-            [title]="isCollapsed() ? item.label : ''"
-          >
-            <nz-icon [nzType]="item.icon" />
-            @if (!isCollapsed()) {
-              <span>{{ item.label }}</span>
+            @for (item of group.items; track item.label) {
+              @if (item.children) {
+                <li nz-submenu [nzTitle]="item.label" [nzIcon]="item.icon">
+                  <ul>
+                    @for (child of item.children; track child.route) {
+                      <li nz-menu-item nzMatchRouter [routerLink]="child.route">
+                        <span>{{ child.label }}</span>
+                      </li>
+                    }
+                  </ul>
+                </li>
+              } @else {
+                <li
+                  nz-menu-item
+                  nzMatchRouter
+                  [routerLink]="item.route"
+                  [title]="isCollapsed() ? item.label : ''"
+                >
+                  <nz-icon [nzType]="item.icon" />
+                  @if (!isCollapsed()) {
+                    <span>{{ item.label }}</span>
+                  }
+                </li>
+              }
             }
-          </li>
-        }
-      </ul>
+          }
+        </ul>
+      </div>
 
-      <!-- User profile -->
-      <div class="sidebar-user">
-        <nz-avatar [nzText]="userName().charAt(0)" [nzSize]="36" class="user-avatar" />
+      <!-- User profile with dropdown -->
+      <div
+        class="flex items-center gap-2.5 px-4 py-3 border-t border-gray-100 mt-2 overflow-hidden shrink-0 cursor-pointer transition-colors hover:bg-gray-50"
+        nz-dropdown
+        [nzDropdownMenu]="userMenu"
+        nzTrigger="click"
+        nzPlacement="topLeft"
+      >
+        <app-avatar [text]="userName().charAt(0)" [size]="36" class="user-avatar" />
         @if (!isCollapsed()) {
-          <div class="user-info">
-            <div class="user-name">{{ userName() }}</div>
-            <div class="user-role">Admin</div>
+          <div class="overflow-hidden min-w-0">
+            <div class="text-sm font-semibold text-gray-900 truncate">{{ userName() }}</div>
+            <div class="text-xs text-gray-400">{{ userRole() }}</div>
           </div>
         }
       </div>
 
-      <!-- Logout -->
-      <button
-        class="sidebar-logout"
-        (click)="logout()"
-        [title]="isCollapsed() ? 'Logout' : ''"
-        type="button"
+      <nz-dropdown-menu #userMenu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-menu-item (click)="openProfile()" class="flex items-center gap-3 px-4 py-2.5">
+            <nz-icon nzType="user" />
+            <span>Thông tin tài khoản</span>
+          </li>
+          <li nz-menu-item (click)="openChangePassword()" class="flex items-center gap-3 px-4 py-2.5">
+            <nz-icon nzType="lock" />
+            <span>Đổi mật khẩu</span>
+          </li>
+          <li nz-menu-divider></li>
+          <li nz-menu-item (click)="confirmLogout()" class="flex items-center gap-3 px-4 py-2.5 text-red-500">
+            <nz-icon nzType="logout" />
+            <span>Đăng xuất</span>
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+
+      <!-- Profile Modal -->
+      <nz-modal
+        [(nzVisible)]="showProfileModal"
+        nzTitle="Thông tin tài khoản"
+        [nzFooter]="null"
+        nzWidth="480"
       >
-        <nz-icon nzType="logout" />
-        @if (!isCollapsed()) {
-          <span>Log out</span>
-        }
-      </button>
+        <ng-container *nzModalContent>
+          <div class="py-2">
+            <div class="flex justify-center mb-6">
+              <app-avatar [text]="userName().charAt(0)" [size]="64" class="user-avatar" />
+            </div>
+            <div class="flex justify-between py-3 border-b border-gray-100">
+              <span class="text-gray-400 text-sm">Họ tên</span>
+              <span class="text-gray-800 font-medium">{{ userName() }}</span>
+            </div>
+            <div class="flex justify-between py-3 border-b border-gray-100">
+              <span class="text-gray-400 text-sm">Email</span>
+              <span class="text-gray-800 font-medium">{{ user()?.email ?? '—' }}</span>
+            </div>
+            <div class="flex justify-between py-3">
+              <span class="text-gray-400 text-sm">Vai trò</span>
+              <span class="text-gray-800 font-medium">{{ userRole() }}</span>
+            </div>
+          </div>
+        </ng-container>
+      </nz-modal>
+
+      <!-- Change Password Modal -->
+      <nz-modal
+        [(nzVisible)]="showPasswordModal"
+        nzTitle="Đổi mật khẩu"
+        nzOkText="Xác nhận"
+        nzCancelText="Hủy"
+        (nzOnOk)="onChangePassword()"
+        nzWidth="420"
+      >
+        <ng-container *nzModalContent>
+          <form nz-form [formGroup]="passwordForm" nzLayout="vertical">
+            <nz-form-item>
+              <nz-form-label nzRequired>Mật khẩu hiện tại</nz-form-label>
+              <nz-form-control nzErrorTip="Vui lòng nhập mật khẩu hiện tại">
+                <app-input type="password" formControlName="currentPassword" placeholder="Nhập mật khẩu hiện tại" prefixIcon="lock" />
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-label nzRequired>Mật khẩu mới</nz-form-label>
+              <nz-form-control nzErrorTip="Mật khẩu tối thiểu 6 ký tự">
+                <app-input type="password" formControlName="newPassword" placeholder="Nhập mật khẩu mới" prefixIcon="lock" />
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-label nzRequired>Xác nhận mật khẩu</nz-form-label>
+              <nz-form-control nzErrorTip="Vui lòng xác nhận mật khẩu">
+                <app-input type="password" formControlName="confirmPassword" placeholder="Nhập lại mật khẩu mới" prefixIcon="lock" />
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+        </ng-container>
+      </nz-modal>
     </div>
   </nz-sider>
 
   <!-- Main content -->
   <nz-layout class="main-layout">
-    <nz-content class="main-content">
+    <nz-content class="p-6 lg:px-8">
       <router-outlet />
     </nz-content>
   </nz-layout>

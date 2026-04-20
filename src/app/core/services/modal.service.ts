@@ -1,35 +1,36 @@
 import { inject, Injectable } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   private readonly nzModal = inject(NzModalService);
 
   confirm(title: string, content = ''): Observable<boolean> {
-    const result$ = new Subject<boolean>();
+    return new Observable<boolean>((subscriber) => {
+      const ref = this.nzModal.confirm({
+        nzTitle: title,
+        nzContent: content,
+        nzOkText: 'Confirm',
+        nzCancelText: 'Cancel',
+        nzOkDanger: true,
+        nzOnOk: () => true,
+        nzOnCancel: () => false,
+      });
 
-    this.nzModal.confirm({
-      nzTitle: title,
-      nzContent: content,
-      nzOkText: 'Confirm',
-      nzCancelText: 'Cancel',
-      nzOkDanger: true,
-      nzOnOk: () => {
-        result$.next(true);
-        result$.complete();
-      },
-      nzOnCancel: () => {
-        result$.next(false);
-        result$.complete();
-      },
+      const sub = ref.afterClose.subscribe((result) => {
+        subscriber.next(result === true);
+        subscriber.complete();
+      });
+
+      return () => sub.unsubscribe();
     });
-
-    return result$.asObservable();
   }
 
   delete(itemName = ''): Observable<boolean> {
-    const content = itemName ? `Are you sure you want to delete "${itemName}"?` : 'Are you sure you want to delete this item?';
+    const content = itemName
+      ? `Are you sure you want to delete "${itemName}"?`
+      : 'Are you sure you want to delete this item?';
     return this.confirm('Confirm Delete', content);
   }
 

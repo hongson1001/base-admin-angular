@@ -1,3 +1,4 @@
+/* Layout constraints - Tailwind can't override ng-zorro layout */
 :host {
   display: block;
   height: 100vh;
@@ -9,7 +10,7 @@
   overflow: hidden;
 }
 
-/* ===== Sidebar ===== */
+/* Sidebar - ng-zorro overrides */
 .sidebar {
   background: #fff !important;
   border-right: 1px solid #f0f0f0;
@@ -17,7 +18,6 @@
   overflow: hidden !important;
 }
 
-/* Override ng-zorro sider children to fill height */
 .sidebar ::ng-deep .ant-layout-sider-children {
   height: 100%;
   display: flex;
@@ -29,28 +29,65 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  padding: 16px 0;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
+/* Logo avatar color */
 .logo-avatar {
   background: #52c41a;
   flex-shrink: 0;
 }
 
-.menu-label {
-  padding: 8px 24px;
+/* Collapse button */
+.collapse-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  color: #8c8c8c;
+  transition: all 0.2s;
+}
+
+.collapse-btn:hover {
+  color: #52c41a;
+  border-color: #52c41a;
+  background: #f6ffed;
+}
+
+/* Menu area */
+.sidebar-menu-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ng-zorro menu overrides - can't use Tailwind */
+.sidebar-menu {
+  border-right: none !important;
+  background: transparent;
+}
+
+.menu-group-label {
+  padding: 16px 20px 6px;
   font-size: 11px;
   font-weight: 600;
   color: #bfbfbf;
   letter-spacing: 0.5px;
+  list-style: none;
+  text-align: center;
 }
 
-/* Menu items */
-.sidebar-menu {
-  border-right: none !important;
-  background: transparent;
+:host-context(nz-sider:not(.ant-layout-sider-collapsed)) .menu-group-label {
+  text-align: left;
 }
 
 .sidebar-menu .ant-menu-item {
@@ -61,6 +98,7 @@
   line-height: 42px;
   color: #8c8c8c;
   font-size: 14px;
+  width: auto !important;
 }
 
 .sidebar-menu .ant-menu-item nz-icon {
@@ -83,123 +121,34 @@
   display: none;
 }
 
-.sidebar-menu .ant-menu-item {
-  width: 100% !important;
-}
-
-.sidebar-spacer {
-  flex: 1;
-}
-
-/* Dark mode toggle */
-.dark-mode-toggle {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 24px;
+.sidebar-menu ::ng-deep .ant-menu-submenu-title {
+  margin: 2px 8px;
+  padding-left: 16px !important;
+  border-radius: 8px;
+  height: 42px;
+  line-height: 42px;
   color: #8c8c8c;
   font-size: 14px;
-  cursor: pointer;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
 }
 
-.dark-mode-toggle:hover {
+.sidebar-menu ::ng-deep .ant-menu-submenu-title:hover {
   color: #1a1a2e;
+  background: #f6f6f6;
 }
 
-.toggle-indicator {
-  margin-left: auto;
-  width: 36px;
-  height: 20px;
-  background: #e0e0e0;
-  border-radius: 10px;
-  position: relative;
-  transition: background 0.3s;
-}
-
-.toggle-indicator.active {
-  background: #52c41a;
-}
-
-.toggle-dot {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 14px;
-  height: 14px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform 0.3s;
-}
-
-.toggle-indicator.active .toggle-dot {
-  transform: translateX(16px);
-}
-
-/* User profile */
-.sidebar-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border-top: 1px solid #f0f0f0;
-  margin-top: 8px;
-}
-
+/* User avatar color */
 .user-avatar {
   background: #e8f5e9;
   color: #52c41a;
   flex-shrink: 0;
 }
 
-.user-info {
-  overflow: hidden;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a2e;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.user-role {
-  font-size: 12px;
-  color: #bfbfbf;
-}
-
-/* Logout */
-.sidebar-logout {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 24px;
-  color: #8c8c8c;
-  font-size: 14px;
-  cursor: pointer;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-}
-
-.sidebar-logout:hover {
-  color: #ff4d4f;
-}
-
-/* ===== Main content ===== */
+/* Main content - ng-zorro layout override */
 .main-layout {
   background: #f7f8fc;
   height: 100vh;
+  overflow-x: hidden;
   overflow-y: auto;
   flex: 1 !important;
-}
-
-.main-content {
-  padding: 24px 32px;
+  min-width: 0;
 }
